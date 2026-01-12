@@ -2,8 +2,7 @@
 
 Unofficial Docker image for running Hytale game servers.
 
-[![Build Status](https://github.com/dealernode/hytale-server-docker/actions/workflows/hytale-docker-build.yml/badge.svg)](https://github.com/dealernode/hytale-server-docker/actions)
-[![Docker Pulls](https://img.shields.io/docker/pulls/dealernode/hytale-server)](https://hub.docker.com/r/dealernode/hytale-server)
+[![Build Status](https://github.com/dealernode/dealer-node-docker-hytale/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/dealernode/dealer-node-docker-hytale/actions)
 
 ## Features
 
