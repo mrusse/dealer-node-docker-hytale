@@ -22,20 +22,20 @@ Unofficial Docker image for running Hytale game servers.
 1. **Hytale Account** with server access
 2. **OAuth2 Refresh Token** from `hytale-downloader`
 
-### Getting Your Refresh Token
+### Getting Your Credentials
 
 ```bash
 # Download hytale-downloader from Hytale's official site
-curl -L -o hytale-downloader.zip "https://hytale.com/downloads/hytale-downloader-linux.zip"
+curl -L -o hytale-downloader.zip "https://downloader.hytale.com/hytale-downloader.zip"
 unzip hytale-downloader.zip
-chmod +x hytale-downloader
+chmod +x hytale-downloader-linux-amd64
 
 # Run and complete OAuth2 authentication in your browser
-./hytale-downloader
+./hytale-downloader-linux-amd64
 
-# Find your token
-cat ~/.hytale-downloader/config.json
-# Output: {"refresh_token": "YOUR_TOKEN_HERE"}
+# Find your credentials (full JSON content needed)
+cat .hytale-downloader-credentials.json
+# Output: {"access_token":"...","refresh_token":"...","expires_at":...,"branch":"release"}
 ```
 
 ---
@@ -48,7 +48,7 @@ cat ~/.hytale-downloader/config.json
 docker run -d \
   --name hytale-server \
   -p 5520:5520/udp \
-  -e HYTALE_REFRESH_TOKEN="your_token_here" \
+  -e HYTALE_CREDENTIALS_JSON='{"access_token":"...","refresh_token":"...","expires_at":...,"branch":"release"}' \
   -e SERVER_NAME="My Hytale Server" \
   -e MAX_PLAYERS=20 \
   -v hytale-data:/server/universe \
@@ -67,7 +67,7 @@ services:
     ports:
       - "5520:5520/udp"
     environment:
-      - HYTALE_REFRESH_TOKEN=your_token_here
+      - HYTALE_CREDENTIALS_JSON={"access_token":"...","refresh_token":"...","expires_at":...,"branch":"release"}
       - SERVER_NAME=My Hytale Server
       - MAX_PLAYERS=20
       - MEMORY_MB=4096
@@ -87,7 +87,7 @@ volumes:
 
 | Variable | Required | Default | Description |
 |----------|----------|---------|-------------|
-| `HYTALE_REFRESH_TOKEN` | ✅ **Yes** | - | OAuth2 refresh token for authentication |
+| `HYTALE_CREDENTIALS_JSON` | ✅ **Yes** | - | Full JSON from `.hytale-downloader-credentials.json` |
 | `SERVER_NAME` | No | `Hytale Server - (Dealer Node)` | Server display name |
 | `MAX_PLAYERS` | No | `10` | Maximum concurrent players |
 | `MEMORY_MB` | No | `4096` | JVM heap size in MB |
@@ -143,7 +143,7 @@ sudo apt update && sudo apt install -y docker.io
 sudo docker run -d \
   --name hytale \
   -p 5520:5520/udp \
-  -e HYTALE_REFRESH_TOKEN="your_token" \
+  -e HYTALE_CREDENTIALS_JSON='{...}' \
   -v hytale-data:/server/universe \
   ghcr.io/dealernode/hytale-server:latest
 ```
@@ -175,7 +175,7 @@ cd dealer-node-docker-hytale
 docker build -t hytale-server .
 
 # Run
-docker run -d -p 5520:5520/udp -e HYTALE_REFRESH_TOKEN="..." hytale-server
+docker run -d -p 5520:5520/udp -e HYTALE_CREDENTIALS_JSON='{...}' hytale-server
 ```
 
 ---
@@ -183,7 +183,7 @@ docker run -d -p 5520:5520/udp -e HYTALE_REFRESH_TOKEN="..." hytale-server
 ## Troubleshooting
 
 ### Server won't start
-- Check that `HYTALE_REFRESH_TOKEN` is set correctly
+- Check that `HYTALE_CREDENTIALS_JSON` is set correctly (must be full JSON)
 - Verify you have at least 4GB RAM available
 - Check logs: `docker logs hytale-server`
 
