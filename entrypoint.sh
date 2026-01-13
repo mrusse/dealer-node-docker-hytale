@@ -28,9 +28,7 @@ echo "[Dealer Node] Configuring authentication..."
 # The hytale-downloader stores credentials in .hytale-downloader-credentials.json
 # We inject the pre-obtained credentials via environment variable
 # Format based on actual hytale-downloader behavior
-cat > .hytale-downloader-credentials.json << EOF
-${HYTALE_CREDENTIALS_JSON}
-EOF
+printf '%s' "$HYTALE_CREDENTIALS_JSON" > .hytale-downloader-credentials.json
 
 chmod 600 .hytale-downloader-credentials.json
 echo "[Dealer Node] Credentials configured"
