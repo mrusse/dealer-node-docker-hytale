@@ -63,26 +63,3 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
 USER hytale
 
 ENTRYPOINT ["/entrypoint.sh"]`
-and docker-compose.yml
-`version: "3.8"
-
-services:
-  hytale:
-    stdin_open: true
-    tty: true
-    image: hytale-server:local
-    container_name: hytale-server
-    ports:
-      - "0.0.0.0:5520:5520/udp"
-    environment:
-      HYTALE_CREDENTIALS_JSON: '{}'
-      SERVER_NAME: "My Hytale Server"
-      MAX_PLAYERS: "5"
-      MEMORY_MB: "14336"
-      AUTH_MODE: "authenticated"
-    volumes:
-      - hytale-data:/server
-    restart: unless-stopped
-
-volumes:
-  hytale-data:
