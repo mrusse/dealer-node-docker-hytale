@@ -8,7 +8,7 @@
 #   - Manual workflow dispatch
 #   - Release tags (v*)
 #
-# Published to: ghcr.io/dealernode/hytale-server
+# Published to: ghcr.io/mrusse/hytale-server
 # ==============================================================================
 
 name: Build Hytale Server Image
@@ -43,7 +43,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: dealernode/hytale-server
+  IMAGE_NAME: mrusse/hytale-server
 
 jobs:
   build-and-push:
