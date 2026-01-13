@@ -2,7 +2,7 @@
 # Hytale Server Docker Image
 # ==============================================================================
 # Runs a Hytale game server with automatic updates via hytale-downloader.
-# 
+#
 # SECURITY: No credentials are stored in this image. All authentication
 # tokens must be provided at runtime via environment variables.
 # ==============================================================================
@@ -18,7 +18,12 @@ RUN apk add --no-cache \
     curl \
     unzip \
     bash \
-    jq
+    jq \
+    gcompat && \
+    # some builds expect /lib64/ld-linux-x86-64.so.2
+    if [ -e /lib/ld-linux-x86-64.so.2 ] && [ ! -e /lib64/ld-linux-x86-64.so.2 ]; then \
+      ln -s /lib/ld-linux-x86-64.so.2 /lib64/ld-linux-x86-64.so.2; \
+    fi
 
 # Create non-root user for security
 RUN addgroup -S hytale && adduser -S hytale -G hytale
@@ -52,9 +57,32 @@ ENV VIEW_DISTANCE=10
 
 # Health check - verify server process is running
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
-    CMD pgrep -f "HytaleServer.jar" || exit 1
+    CMD pgrep -f "java.*HytaleServer\.jar" >/dev/null || exit 1
 
 # Run as non-root user
 USER hytale
 
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["/entrypoint.sh"]`
+and docker-compose.yml
+`version: "3.8"
+
+services:
+  hytale:
+    stdin_open: true
+    tty: true
+    image: hytale-server:local
+    container_name: hytale-server
+    ports:
+      - "0.0.0.0:5520:5520/udp"
+    environment:
+      HYTALE_CREDENTIALS_JSON: '{}'
+      SERVER_NAME: "My Hytale Server"
+      MAX_PLAYERS: "5"
+      MEMORY_MB: "14336"
+      AUTH_MODE: "authenticated"
+    volumes:
+      - hytale-data:/server
+    restart: unless-stopped
+
+volumes:
+  hytale-data:
