@@ -38,10 +38,10 @@ echo "[Dealer Node] Credentials configured"
 # ------------------------------------------------------------------------------
 # Download/update server files
 # ------------------------------------------------------------------------------
-if [ ! -f "HytaleServer.jar" ]; then
+if [ ! -f "HytaleServer.jar" ] && [ ! -f "Server/HytaleServer.jar" ]; then
     echo "[Dealer Node] Downloading server files..."
     ./hytale-downloader -download-path server-files.zip
-    
+
     if [ -f "server-files.zip" ]; then
         unzip -o server-files.zip -d .
         rm server-files.zip
@@ -52,7 +52,7 @@ if [ ! -f "HytaleServer.jar" ]; then
     fi
 else
     echo "[Dealer Node] Server files already present"
-    
+
     # Check for updates
     if [ "${SKIP_UPDATE_CHECK:-false}" != "true" ]; then
         echo "[Dealer Node] Checking for updates..."
@@ -63,7 +63,12 @@ fi
 # ------------------------------------------------------------------------------
 # Verify required files exist
 # ------------------------------------------------------------------------------
-if [ ! -f "HytaleServer.jar" ]; then
+JAR_PATH="HytaleServer.jar"
+if [ ! -f "$JAR_PATH" ] && [ -f "Server/HytaleServer.jar" ]; then
+    JAR_PATH="Server/HytaleServer.jar"
+fi
+
+if [ ! -f "$JAR_PATH" ]; then
     echo "[ERROR] HytaleServer.jar not found after download"
     exit 1
 fi
@@ -117,5 +122,5 @@ if [ $# -gt 0 ]; then
 fi
 
 # Execute the server (exec replaces shell process)
-echo "[Dealer Node] Executing: java $JVM_ARGS -jar HytaleServer.jar $SERVER_ARGS"
-exec java $JVM_ARGS -jar HytaleServer.jar $SERVER_ARGS
+echo "[Dealer Node] Executing: java $JVM_ARGS -jar $JAR_PATH $SERVER_ARGS"
+exec java $JVM_ARGS -jar "$JAR_PATH" $SERVER_ARGS
